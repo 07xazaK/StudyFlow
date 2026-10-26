@@ -1,0 +1,18 @@
+{
+  "name": "StudyFlow — навчальний простір",
+  "short_name": "StudyFlow",
+  "description": "Календар, завдання, контрольні та облік оплат репетиторів.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f6f7fb",
+  "theme_color": "#7065d8",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

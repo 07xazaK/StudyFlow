@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#7065d8" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<link rel="manifest" href="manifest.json" />
+<link rel="apple-touch-icon" href="icon.svg" />
+<title>StudyFlow — твій навчальний простір</title>
+<style>
+:root{--bg:#f6f7fb;--panel:#fff;--text:#202438;--muted:#777d91;--line:#e8eaf2;--primary:#7065d8;--primary-light:#eeecff;--pink:#f6dce9;--green:#dff3e8;--yellow:#fff0c9;--blue:#dfeeff;--shadow:0 8px 28px rgba(36,39,70,.06)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text)}
+button,input,select,textarea{font:inherit}button{cursor:pointer;border:0}
+.app{display:grid;grid-template-columns:240px minmax(0,1fr);min-height:100vh}
+.sidebar{background:#fff;border-right:1px solid var(--line);padding:28px 18px;display:flex;flex-direction:column;gap:28px}
+.brand{display:flex;align-items:center;gap:10px;font-size:21px;font-weight:800;letter-spacing:-.7px;padding:0 10px}
+.logo{display:grid;place-items:center;background:var(--primary);color:#fff;border-radius:12px;width:38px;height:38px;font-size:20px}
+.nav{display:grid;gap:7px}.nav button{display:flex;align-items:center;gap:12px;padding:12px 14px;background:transparent;color:#6e7387;border-radius:12px;text-align:left;font-weight:600}
+.nav button.active,.nav button:hover{background:var(--primary-light);color:var(--primary)}
+.nav .ico{font-size:18px;width:22px;text-align:center}.side-note{margin-top:auto;background:#f7f5ff;border-radius:16px;padding:16px;font-size:13px;color:#6c659b;line-height:1.5}
+main{padding:30px clamp(16px,3vw,42px);min-width:0;max-width:1500px;width:100%;margin:0 auto}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:28px}.eyebrow{color:var(--muted);font-size:13px;margin-bottom:5px}.topbar h1{font-size:clamp(25px,3vw,34px);letter-spacing:-1px;margin:0}.today{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 14px;color:#555b70;font-size:13px}
+.page{display:none}.page.active{display:block}.welcome{display:flex;align-items:center;justify-content:space-between;gap:20px;background:linear-gradient(115deg,#eeecff,#f9edf5);border-radius:22px;padding:25px 28px;margin-bottom:22px}
+.welcome h2{margin:0 0 7px;font-size:22px}.welcome p{margin:0;color:#6d6b86;line-height:1.5}.welcome-icon{font-size:48px}
+.btn{background:var(--primary);color:#fff;border-radius:11px;padding:11px 15px;font-weight:700}.btn:hover{filter:brightness(.96)}.btn.secondary{background:var(--primary-light);color:var(--primary)}.btn.ghost{background:#f3f4f8;color:#555b70}.btn.small{font-size:12px;padding:7px 10px}.btn.danger{background:#fff0f0;color:#b54848}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:22px}.stat,.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:19px;box-shadow:var(--shadow)}
+.stat-top{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;gap:6px}.stat-icon{font-size:20px}.stat strong{display:block;font-size:28px;margin-top:12px;letter-spacing:-.8px}.stat small{display:block;color:var(--muted);margin-top:4px}
+.two-col{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(280px,.8fr);gap:18px}.panel{margin-bottom:18px}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.panel h3{margin:0;font-size:17px}.muted{color:var(--muted);font-size:13px}
+.item-list{display:grid;gap:10px}.item{display:flex;align-items:flex-start;gap:12px;padding:12px;border:1px solid var(--line);border-radius:13px}.item .dot{width:10px;height:10px;border-radius:50%;margin-top:5px;flex-shrink:0}.item-body{min-width:0;flex:1}.item-title{font-weight:700;font-size:14px}.item-sub{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.45}.pill{display:inline-block;border-radius:99px;padding:5px 8px;font-size:11px;font-weight:700;background:#f0f1f6;color:#666b7e;white-space:nowrap}.pill.purple{background:var(--primary-light);color:var(--primary)}.pill.pink{background:#ffedf4;color:#b84f7b}.pill.green{background:#e3f7ed;color:#25865b}.pill.yellow{background:#fff4d6;color:#9c7116}
+.task-row{display:flex;gap:10px;align-items:flex-start}.task-row input[type=checkbox]{accent-color:var(--primary);margin-top:4px;width:17px;height:17px}.done .item-title{text-decoration:line-through;color:#9a9daf}.empty{padding:25px;text-align:center;color:var(--muted);font-size:14px}
+.toolbar{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:16px;align-items:center}.toolbar select,.toolbar input{border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 12px;color:var(--text)}
+.calendar-head{display:flex;align-items:center;gap:10px}.calendar-head strong{min-width:150px;text-align:center}.calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px}.day-label{text-align:center;color:var(--muted);font-size:12px;padding:8px 0}.day{background:#fff;border:1px solid var(--line);border-radius:12px;min-height:105px;padding:9px 7px;overflow:hidden}.day.muted-day{opacity:.45}.day.today-day{border:2px solid var(--primary)}.day-num{font-size:12px;font-weight:800;margin-bottom:7px}.event-chip{font-size:10px;padding:5px 6px;border-radius:6px;margin-bottom:4px;line-height:1.3;overflow-wrap:anywhere;background:var(--primary-light);color:#5c50c2}.event-chip.exam{background:var(--yellow);color:#8a6719}.event-chip.tutor{background:var(--green);color:#277b58}.event-chip.hobby{background:var(--pink);color:#a3446c}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.field{display:grid;gap:6px}.field.full{grid-column:1/-1}.field label{font-size:12px;color:var(--muted);font-weight:700}.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);background:#fff;border-radius:10px;padding:11px 12px;outline:none}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--primary)}.form-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+.payment-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}.mini-stat{background:#f8f8fc;border-radius:13px;padding:14px}.mini-stat span{display:block;color:var(--muted);font-size:12px}.mini-stat strong{display:block;font-size:21px;margin-top:7px}
+.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:13px 10px;border-bottom:1px solid var(--line);white-space:nowrap}th{color:var(--muted);font-weight:600;font-size:12px}td strong{font-weight:700}.pay-actions{display:flex;gap:6px}
+.notice{background:#fff9e8;border:1px solid #f5e7bc;color:#866a23;border-radius:12px;padding:13px 15px;font-size:13px;line-height:1.5;margin-bottom:16px}
+.progress{height:7px;border-radius:9px;background:#eeeef5;overflow:hidden;margin-top:9px}.progress span{height:100%;display:block;background:var(--primary);border-radius:9px}
+footer{text-align:center;color:#a0a3b3;font-size:11px;padding:22px}
+@media(max-width:900px){.app{grid-template-columns:76px minmax(0,1fr)}.sidebar{padding:20px 10px}.brand{padding:0;justify-content:center}.brand-name,.nav-label,.side-note{display:none}.nav button{justify-content:center;padding:13px 8px}.nav .ico{width:auto;font-size:20px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.two-col{grid-template-columns:1fr}}
+@media(max-width:600px){.app{display:block}.sidebar{position:fixed;top:auto;bottom:0;left:0;right:0;z-index:10;flex-direction:row;justify-content:center;padding:8px 6px calc(8px + env(safe-area-inset-bottom));border-right:0;border-top:1px solid var(--line);gap:0;overflow-x:auto;box-shadow:0 -5px 20px rgba(36,39,70,.06)}.brand{display:none}.nav{display:flex;justify-content:space-around;gap:2px;width:100%}.nav button{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;padding:7px 3px;border-radius:10px;min-width:0}.nav .ico{font-size:19px;width:auto}.nav-label{display:block;font-size:10px;white-space:nowrap}.side-note{display:none}main{padding:20px 13px calc(95px + env(safe-area-inset-bottom))}.topbar{align-items:flex-start}.today{display:none}.welcome{padding:19px}.welcome-icon{display:none}.stats{gap:9px}.stat{padding:14px}.stat strong{font-size:24px}.stat-top{font-size:11px}.panel{padding:14px}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.payment-summary{grid-template-columns:1fr}.calendar{gap:3px}.day{min-height:75px;padding:5px 3px;border-radius:8px}.day-label{font-size:10px}.event-chip{font-size:9px;padding:3px}.day-num{font-size:11px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">✦</div><span class="brand-name">StudyFlow</span></div>
+  <nav class="nav" aria-label="Основна навігація">
+    <button class="active" data-page="home"><span class="ico">⌂</span><span class="nav-label">Огляд</span></button>
+    <button data-page="calendar"><span class="ico">▦</span><span class="nav-label">Календар</span></button>
+    <button data-page="tasks"><span class="ico">☷</span><span class="nav-label">Завдання</span></button>
+    <button data-page="exams"><span class="ico">✧</span><span class="nav-label">Контрольні</span></button>
+    <button data-page="payments"><span class="ico">₴</span><span class="nav-label">Оплати</span></button>
+  </nav>
+  <div class="side-note">✦ Маленькі кроки щодня — великий результат згодом.</div>
+</aside>
+<main>
+  <header class="topbar">
+    <div><div class="eyebrow">Твій персональний навчальний простір</div><h1 id="pageTitle">Привіт! Ось твій план 👋</h1></div>
+    <div class="today" id="todayLabel"></div>
+  </header>
+
+  <section class="page active" id="page-home">
+    <div class="welcome"><div><h2>Твій день — під контролем</h2><p>Заняття, завдання та важливі дати<br>в одному місці.</p><div style="margin-top:15px"><button class="btn" data-goto="tasks">Переглянути завдання →</button></div></div><div class="welcome-icon">📚</div></div>
+    <div class="stats">
+      <div class="stat"><div class="stat-top"><span>Завдань залишилось</span><span class="stat-icon">☷</span></div><strong id="statTasks">0</strong><small>не виконано</small></div>
+      <div class="stat"><div class="stat-top"><span>Важливі дати</span><span class="stat-icon">✧</span></div><strong id="statExams">0</strong><small>попереду</small></div>
+      <div class="stat"><div class="stat-top"><span>До оплати</span><span class="stat-icon">₴</span></div><strong id="statDebt">0 ₴</strong><small>за проведені заняття</small></div>
+      <div class="stat"><div class="stat-top"><span>Виконано</span><span class="stat-icon">✓</span></div><strong id="statDone">0%</strong><small>усіх завдань</small></div>
+    </div>
+    <div class="two-col">
+      <div class="panel"><div class="panel-head"><h3>План на сьогодні</h3><button class="btn secondary small" data-goto="calendar">Календар</button></div><div id="todayEvents" class="item-list"></div></div>
+      <div class="panel"><div class="panel-head"><h3>Наступні контрольні</h3><button class="btn secondary small" data-goto="exams">Усі дати</button></div><div id="upcomingExams" class="item-list"></div></div>
+    </div>
+    <div class="panel"><div class="panel-head"><h3>Що варто зробити далі</h3><span class="pill purple">Підказка</span></div><div id="nextTasks" class="item-list"></div></div>
+  </section>
+
+  <section class="page" id="page-calendar">
+    <div class="toolbar">
+      <div class="calendar-head"><button class="btn ghost small" id="prevMonth">‹</button><strong id="monthTitle"></strong><button class="btn ghost small" id="nextMonth">›</button></div>
+      <button class="btn" id="addEventBtn">＋ Додати подію</button>
+    </div>
+    <div class="panel"><div class="calendar" id="calendarGrid"></div></div>
+    <div class="panel"><div class="panel-head"><h3>Усі заплановані події</h3><span class="muted">Уроки, репетитори, хобі та іспити</span></div><div id="eventList" class="item-list"></div></div>
+  </section>
+
+  <section class="page" id="page-tasks">
+    <div class="toolbar"><select id="taskFilter"><option value="all">Усі завдання</option><option value="school">Школа</option><option value="tutor">Репетитори</option><option value="personal">Особисте</option><option value="open">Не виконані</option><option value="done">Виконані</option></select><button class="btn" id="addTaskBtn">＋ Додати завдання</button></div>
+    <div class="panel"><div class="panel-head"><h3>Мої завдання</h3><span class="muted" id="taskCount"></span></div><div id="taskList" class="item-list"></div></div>
+    <div class="panel"><h3 style="margin-bottom:8px">Розумний планувальник — демоверсія</h3><p class="muted" style="line-height:1.6">Введи завдання звичайними словами. Сайт спробує знайти дату й предмет. У цій версії це простий локальний аналіз, не повноцінний AI.</p><div class="field"><label for="smartInput">Наприклад: «Біологія — вивчити тему до 30 жовтня»</label><textarea id="smartInput" rows="3" placeholder="Напиши завдання своїми словами..."></textarea></div><div class="form-actions"><button class="btn" id="parseTaskBtn">Розібрати завдання</button></div><div id="smartResult" class="muted" style="margin-top:10px"></div></div>
+  </section>
+
+  <section class="page" id="page-exams">
+    <div class="notice">Додавай контрольні, іспити, тести та дедлайни проєктів. Далі можна розширити це автоматичним планом підготовки.</div>
+    <div class="toolbar"><select id="examFilter"><option value="all">Усі важливі дати</option><option value="upcoming">Майбутні</option><option value="past">Минулі</option></select><button class="btn" id="addExamBtn">＋ Додати важливу дату</button></div>
+    <div class="panel"><div class="panel-head"><h3>Контрольні та іспити</h3><span class="muted">Зворотний відлік</span></div><div id="examList" class="item-list"></div></div>
+  </section>
+
+  <section class="page" id="page-payments">
+    <div class="notice">Облік для тебе: фіксуй проведені заняття й оплати. Суми нижче розраховуються автоматично. Перед внесенням реальних даних пам’ятай, що це демоверсія на цьому пристрої.</div>
+    <div class="payment-summary">
+      <div class="mini-stat"><span>Загалом до оплати</span><strong id="payDebt">0 ₴</strong></div>
+      <div class="mini-stat"><span>Оплачено всього</span><strong id="payPaid">0 ₴</strong></div>
+      <div class="mini-stat"><span>Проведено занять</span><strong id="payLessons">0</strong></div>
+    </div>
+    <div class="panel"><div class="panel-head"><h3>Мої репетитори</h3><button class="btn" id="addTutorBtn">＋ Додати репетитора</button></div><div class="table-wrap"><table><thead><tr><th>Предмет / репетитор</th><th>Ціна</th><th>Проведено</th><th>Оплачено</th><th>Борг</th><th>Дії</th></tr></thead><tbody id="tutorTable"></tbody></table></div></div>
+    <div class="panel"><div class="panel-head"><h3>Історія оплат</h3><span class="muted">Останні зміни</span></div><div id="paymentHistory" class="item-list"></div></div>
+  </section>
+  <footer>StudyFlow · Навчальний прототип · Дані зберігаються локально в цьому браузері</footer>
+</main>
+</div>
+
+<div id="modal" style="display:none;position:fixed;inset:0;background:#17172b66;z-index:20;align-items:center;justify-content:center;padding:16px">
+  <div style="background:#fff;border-radius:20px;padding:24px;width:min(520px,100%);max-height:90vh;overflow:auto;box-shadow:0 20px 70px #2223">
+    <div class="panel-head"><h3 id="modalTitle">Додати</h3><button class="btn ghost small" id="closeModal">✕</button></div>
+    <form id="modalForm"><div id="modalFields" class="form-grid"></div><div class="form-actions"><button type="button" class="btn ghost" id="cancelModal">Скасувати</button><button type="submit" class="btn">Зберегти</button></div></form>
+  </div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const today=new Date();today.setHours(0,0,0,0);
+const iso=d=>{const x=new Date(d);return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,'0')}-${String(x.getDate()).padStart(2,'0')}`};
+const addDays=(d,n)=>{let x=new Date(d);x.setDate(x.getDate()+n);return iso(x)};
+const dateText=s=>s?new Date(s+'T12:00:00').toLocaleDateString('uk-UA',{day:'numeric',month:'long',year:'numeric'}):'Без дати';
+const shortDate=s=>s?new Date(s+'T12:00:00').toLocaleDateString('uk-UA',{day:'numeric',month:'short'}):'—';
+const money=n=>new Intl.NumberFormat('uk-UA',{maximumFractionDigits:0}).format(n)+' ₴';
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const seed={
+ events:[
+ {id:uid(),title:'Українська мова',date:iso(today),time:'08:30',type:'school',note:'Урок у школі'},
+ {id:uid(),title:'Математика з репетитором',date:addDays(today,1),time:'16:00',type:'tutor',note:'Повторити домашнє завдання'},
+ {id:uid(),title:'Танці',date:addDays(today,2),time:'18:00',type:'hobby',note:''},
+ {id:uid(),title:'Контрольна з біології',date:addDays(today,5),time:'10:00',type:'exam',note:'Повторити основні поняття'}
+ ],
+ tasks:[
+ {id:uid(),title:'Вивчити визначення з біології',category:'school',due:addDays(today,2),priority:'high',done:false,note:'Тема адаптацій'},
+ {id:uid(),title:'Виконати вправи з англійської',category:'tutor',due:addDays(today,1),priority:'medium',done:false,note:''},
+ {id:uid(),title:'Підготувати матеріали для проєкту',category:'personal',due:addDays(today,4),priority:'low',done:false,note:''}
+ ],
+ exams:[{id:uid(),title:'Контрольна з біології',subject:'Біологія',date:addDays(today,5),kind:'Контрольна',note:'Повторити визначення'}],
+ tutors:[
+ {id:uid(),name:'Математика',price:500,conducted:3,paid:2},
+ {id:uid(),name:'Англійська',price:400,conducted:4,paid:4},
+ {id:uid(),name:'Українська мова',price:350,conducted:2,paid:1}
+ ],
+ history:[{id:uid(),text:'Початкові дані демоверсії створено',date:iso(today)}]
+};
+let data;
+try{data=JSON.parse(localStorage.getItem('studyflow_data'))||seed}catch(e){data=seed}
+let shownMonth=new Date(today.getFullYear(),today.getMonth(),1),modalMode=null;
+function save(){localStorage.setItem('studyflow_data',JSON.stringify(data));renderAll()}
+function typeLabel(t){return ({school:'Школа',tutor:'Репетитор',hobby:'Хобі',exam:'Контрольна / іспит',other:'Інше'})[t]||t}
+function catLabel(t){return ({school:'Школа',tutor:'Репетитор',personal:'Особисте'})[t]||t}
+function eventColor(t){return ({school:'#8d7ee8',tutor:'#45a77b',hobby:'#d66e9c',exam:'#d5a43d',other:'#8d93a6'})[t]||'#8d93a6'}
+function pillClass(t){return ({school:'purple',tutor:'green',hobby:'pink',exam:'yellow',high:'pink',medium:'yellow',low:'green'})[t]||''}
+function safe(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function daysUntil(s){return Math.round((new Date(s+'T00:00:00')-today)/86400000)}
+function renderHome(){
+ const open=data.tasks.filter(t=>!t.done),done=data.tasks.filter(t=>t.done),future=data.exams.filter(e=>daysUntil(e.date)>=0).sort((a,b)=>a.date.localeCompare(b.date));
+ const debt=data.tutors.reduce((s,t)=>s+Math.max(0,t.conducted-t.paid)*t.price,0);
+ $('#statTasks').textContent=open.length;$('#statExams').textContent=future.length;$('#statDebt').textContent=money(debt);$('#statDone').textContent=(data.tasks.length?Math.round(done.length/data.tasks.length*100):0)+'%';
+ const todays=data.events.filter(e=>e.date===iso(today)).sort((a,b)=>(a.time||'').localeCompare(b.time||''));
+ $('#todayEvents').innerHTML=todays.length?todays.map(e=>`<div class="item"><span class="dot" style="background:${eventColor(e.type)}"></span><div class="item-body"><div class="item-title">${safe(e.title)}</div><div class="item-sub">${safe(e.time||'Час не вказано')} · ${typeLabel(e.type)}${e.note?' · '+safe(e.note):''}</div></div></div>`).join(''):'<div class="empty">На сьогодні подій немає. Можеш відпочити або запланувати щось нове 🌿</div>';
+ $('#upcomingExams').innerHTML=future.slice(0,4).map(e=>`<div class="item"><span class="dot" style="background:var(--yellow)"></span><div class="item-body"><div class="item-title">${safe(e.title)}</div><div class="item-sub">${dateText(e.date)} · ${daysUntil(e.date)===0?'Сьогодні':daysUntil(e.date)===1?'Завтра':'через '+daysUntil(e.date)+' дн.'}</div></div></div>`).join('')||'<div class="empty">Поки немає важливих дат.</div>';
+ const sorted=open.slice().sort((a,b)=>((a.due||'9999').localeCompare(b.due||'9999'))||({high:0,medium:1,low:2}[a.priority]-{high:0,medium:1,low:2}[b.priority]));
+ $('#nextTasks').innerHTML=sorted.slice(0,4).map(t=>`<div class="item"><span class="dot" style="background:${t.priority==='high'?'#d66e9c':t.priority==='medium'?'#d5a43d':'#45a77b'}"></span><div class="item-body"><div class="item-title">${safe(t.title)}</div><div class="item-sub">${catLabel(t.category)} · ${t.due?'До '+dateText(t.due):'Дедлайн не задано'}</div></div><span class="pill ${pillClass(t.priority)}">${({high:'Терміново',medium:'Звичайне',low:'Може зачекати'})[t.priority]}</span></div>`).join('')||'<div class="empty">Усі завдання виконані. Чудова робота!</div>';
+}
+function renderCalendar(){
+ const y=shownMonth.getFullYear(),m=shownMonth.getMonth();$('#monthTitle').textContent=new Date(y,m,1).toLocaleDateString('uk-UA',{month:'long',year:'numeric'});
+ const first=new Date(y,m,1),offset=(first.getDay()+6)%7,days=new Date(y,m+1,0).getDate(),prevDays=new Date(y,m,0).getDate();
+ const labels=['Пн','Вт','Ср','Чт','Пт','Сб','Нд'];let html=labels.map(x=>`<div class="day-label">${x}</div>`).join('');
+ for(let i=0;i<42;i++){let n=i-offset+1,dt,muted=false;if(n<1){dt=new Date(y,m-1,prevDays+n);muted=true}else if(n>days){dt=new Date(y,m+1,n-days);muted=true}else dt=new Date(y,m,n);
+ const ds=iso(dt),events=data.events.filter(e=>e.date===ds).concat(data.exams.filter(e=>e.date===ds&&!data.events.some(v=>v.title===e.title&&v.date===e.date)).map(e=>({...e,type:'exam'})));
+ html+=`<div class="day ${muted?'muted-day':''} ${ds===iso(today)?'today-day':''}"><div class="day-num">${dt.getDate()}</div>${events.slice(0,3).map(e=>`<div class="event-chip ${e.type==='exam'?'exam':e.type==='tutor'?'tutor':e.type==='hobby'?'hobby':''}" title="${safe(e.title)}">${e.time?safe(e.time)+' ':''}${safe(e.title)}</div>`).join('')}${events.length>3?`<div class="muted">+${events.length-3}</div>`:''}</div>`
+ }
+ $('#calendarGrid').innerHTML=html;
+ const all=data.events.slice().sort((a,b)=>a.date.localeCompare(b.date)||(a.time||'').localeCompare(b.time||''));
+ $('#eventList').innerHTML=all.map(e=>`<div class="item"><span class="dot" style="background:${eventColor(e.type)}"></span><div class="item-body"><div class="item-title">${safe(e.title)}</div><div class="item-sub">${dateText(e.date)} · ${safe(e.time||'Час не вказано')} · ${typeLabel(e.type)}${e.note?' · '+safe(e.note):''}</div></div><button class="btn ghost small" data-delete-event="${e.id}">Видалити</button></div>`).join('')||'<div class="empty">Календар поки порожній.</div>';
+}
+function renderTasks(){
+ const f=$('#taskFilter').value;let list=data.tasks.filter(t=>f==='all'||f===t.category||(f==='open'&&!t.done)||(f==='done'&&t.done));
+ list.sort((a,b)=>(a.done-b.done)||(a.due||'9999').localeCompare(b.due||'9999'));
+ $('#taskCount').textContent=`${list.length} завдань`;
+ $('#taskList').innerHTML=list.map(t=>`<div class="item ${t.done?'done':''}"><input type="checkbox" aria-label="Виконано" data-task-check="${t.id}" ${t.done?'checked':''}><div class="item-body"><div class="item-title">${safe(t.title)}</div><div class="item-sub">${catLabel(t.category)} · ${t.due?'Дедлайн: '+dateText(t.due):'Без дедлайну'}${t.note?' · '+safe(t.note):''}</div></div><span class="pill ${pillClass(t.priority)}">${({high:'Терміново',medium:'Звичайне',low:'Не терміново'})[t.priority]}</span><button class="btn ghost small" data-delete-task="${t.id}">✕</button></div>`).join('')||'<div class="empty">Тут поки немає завдань.</div>';
+}
+function renderExams(){
+ let f=$('#examFilter').value,list=data.exams.filter(e=>f==='all'||(f==='upcoming'&&daysUntil(e.date)>=0)||(f==='past'&&daysUntil(e.date)<0)).sort((a,b)=>a.date.localeCompare(b.date));
+ $('#examList').innerHTML=list.map(e=>{let d=daysUntil(e.date),desc=d<0?`Минуло ${Math.abs(d)} дн.`:d===0?'Сьогодні':d===1?'Завтра':`Через ${d} днів`;return `<div class="item"><span class="dot" style="background:#d5a43d"></span><div class="item-body"><div class="item-title">${safe(e.title)}</div><div class="item-sub">${safe(e.subject||'')} · ${safe(e.kind||'Важлива дата')} · ${dateText(e.date)}${e.note?' · '+safe(e.note):''}</div></div><span class="pill yellow">${desc}</span><button class="btn ghost small" data-delete-exam="${e.id}">Видалити</button></div>`}).join('')||'<div class="empty">Немає дат для цього фільтра.</div>';
+}
+function renderPayments(){
+ const debt=data.tutors.reduce((s,t)=>s+Math.max(0,t.conducted-t.paid)*t.price,0),paid=data.tutors.reduce((s,t)=>s+t.paid*t.price,0),lessons=data.tutors.reduce((s,t)=>s+t.conducted,0);
+ $('#payDebt').textContent=money(debt);$('#payPaid').textContent=money(paid);$('#payLessons').textContent=lessons;
+ $('#tutorTable').innerHTML=data.tutors.map(t=>`<tr><td><strong>${safe(t.name)}</strong></td><td>${money(t.price)}</td><td>${t.conducted}</td><td>${t.paid}</td><td><span class="pill ${t.conducted>t.paid?'pink':'green'}">${money(Math.max(0,t.conducted-t.paid)*t.price)}</span></td><td><div class="pay-actions"><button class="btn secondary small" data-conducted="${t.id}">+ Урок</button><button class="btn small" data-paid="${t.id}" ${t.paid>=t.conducted?'disabled style="opacity:.4"':''}>+ Оплата</button><button class="btn ghost small" data-delete-tutor="${t.id}">✕</button></div></td></tr>`).join('')||'<tr><td colspan="6" class="empty">Додай першого репетитора.</td></tr>';
+ $('#paymentHistory').innerHTML=data.history.slice().reverse().slice(0,8).map(h=>`<div class="item"><span class="dot" style="background:#8d7ee8"></span><div class="item-body"><div class="item-title">${safe(h.text)}</div><div class="item-sub">${dateText(h.date)}</div></div></div>`).join('')||'<div class="empty">Історія поки порожня.</div>';
+}
+function renderAll(){renderHome();renderCalendar();renderTasks();renderExams();renderPayments()}
+const titles={home:'Привіт! Ось твій план 👋',calendar:'Твій календар',tasks:'Завдання та дедлайни',exams:'Важливі навчальні дати',payments:'Облік оплат репетиторів'};
+function go(page){$$('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+page));$$('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===page));$('#pageTitle').textContent=titles[page]||'StudyFlow';}
+$$('.nav button').forEach(b=>b.addEventListener('click',()=>go(b.dataset.page)));$$('[data-goto]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.goto)));
+$('#todayLabel').textContent=today.toLocaleDateString('uk-UA',{weekday:'short',day:'numeric',month:'short'});
+$('#prevMonth').onclick=()=>{shownMonth.setMonth(shownMonth.getMonth()-1);renderCalendar()};$('#nextMonth').onclick=()=>{shownMonth.setMonth(shownMonth.getMonth()+1);renderCalendar()};
+$('#taskFilter').onchange=renderTasks;$('#examFilter').onchange=renderExams;
+function field(name,label,type='text',opts={}){return {name,label,type,...opts}}
+function openModal(title,fields,callback){
+ modalMode=callback;$('#modalTitle').textContent=title;$('#modalFields').innerHTML=fields.map(f=>`<div class="field ${f.full?'full':''}"><label for="f-${f.name}">${f.label}</label>${f.type==='select'?`<select id="f-${f.name}" name="${f.name}" ${f.required?'required':''}>${f.options.map(o=>`<option value="${o.value}">${o.label}</option>`).join('')}</select>`:f.type==='textarea'?`<textarea id="f-${f.name}" name="${f.name}" rows="3" ${f.required?'required':''} placeholder="${f.placeholder||''}"></textarea>`:`<input id="f-${f.name}" name="${f.name}" type="${f.type}" ${f.required?'required':''} ${f.value!==undefined?`value="${safe(f.value)}"`:''} ${f.min!==undefined?`min="${f.min}"`:''} ${f.step?`step="${f.step}"`:''} placeholder="${f.placeholder||''}">`}</div>`).join('');
+ $('#modal').style.display='flex';
+}
+function closeModal(){$('#modal').style.display='none';modalMode=null}
+$('#closeModal').onclick=$('#cancelModal').onclick=closeModal;$('#modal').onclick=e=>{if(e.target===$('#modal'))closeModal()};
+$('#modalForm').onsubmit=e=>{e.preventDefault();const fd=new FormData(e.target),v=Object.fromEntries(fd.entries());if(modalMode)modalMode(v);closeModal();e.target.reset();save()};
+$('#addEventBtn').onclick=()=>openModal('Нова подія',[field('title','Назва події','text',{required:true,full:true}),field('date','Дата','date',{required:true,value:iso(today)}),field('time','Час','time'),field('type','Категорія','select',{options:[{value:'school',label:'Школа'},{value:'tutor',label:'Репетитор'},{value:'hobby',label:'Хобі'},{value:'exam',label:'Контрольна / іспит'},{value:'other',label:'Інше'}]}),field('note','Нотатка','text',{full:true})],v=>{data.events.push({id:uid(),...v});if(v.type==='exam')data.exams.push({id:uid(),title:v.title,subject:'',date:v.date,kind:'Контрольна / іспит',note:v.note})});
+$('#addTaskBtn').onclick=()=>openModal('Нове завдання',[field('title','Що потрібно зробити?','text',{required:true,full:true}),field('category','Категорія','select',{options:[{value:'school',label:'Школа'},{value:'tutor',label:'Репетитор'},{value:'personal',label:'Особисте'}]}),field('due','Дедлайн','date',{value:addDays(today,1)}),field('priority','Пріоритет','select',{options:[{value:'high',label:'Терміново'},{value:'medium',label:'Звичайне'},{value:'low',label:'Може зачекати'}]}),field('note','Додаткова нотатка','text',{full:true})],v=>data.tasks.push({id:uid(),...v,done:false}));
+$('#addExamBtn').onclick=()=>openModal('Важлива навчальна дата',[field('title','Назва','text',{required:true,full:true}),field('subject','Предмет','text',{required:true}),field('kind','Тип','select',{options:[{value:'Контрольна',label:'Контрольна'},{value:'Іспит',label:'Іспит'},{value:'Тест',label:'Тест'},{value:'Дедлайн проєкту',label:'Дедлайн проєкту'},{value:'Інше',label:'Інше'}]}),field('date','Дата','date',{required:true,value:addDays(today,7)}),field('note','Що повторити?','text',{full:true})],v=>{data.exams.push({id:uid(),...v});if(!data.events.some(e=>e.title===v.title&&e.date===v.date))data.events.push({id:uid(),title:v.title,date:v.date,time:'',type:'exam',note:v.note})});
+$('#addTutorBtn').onclick=()=>openModal('Додати репетитора',[field('name','Предмет або ім’я','text',{required:true,full:true}),field('price','Ціна одного заняття (грн)','number',{required:true,min:0}),field('conducted','Проведено занять','number',{required:true,min:0,value:0}),field('paid','Оплачено занять','number',{required:true,min:0,value:0})],v=>{const t={id:uid(),name:v.name,price:+v.price,conducted:+v.conducted,paid:Math.min(+v.paid,+v.conducted)};data.tutors.push(t);data.history.push({id:uid(),text:`Додано облік: ${t.name}`,date:iso(today)})});
+document.addEventListener('change',e=>{
+ if(e.target.matches('[data-task-check]')){const t=data.tasks.find(t=>t.id===e.target.dataset.taskCheck);if(t){t.done=e.target.checked;save()}}
+});
+document.addEventListener('click',e=>{
+ const b=e.target.closest('button');if(!b)return;
+ if(b.dataset.deleteTask){data.tasks=data.tasks.filter(x=>x.id!==b.dataset.deleteTask);save()}
+ if(b.dataset.deleteEvent){data.events=data.events.filter(x=>x.id!==b.dataset.deleteEvent);save()}
+ if(b.dataset.deleteExam){const ex=data.exams.find(x=>x.id===b.dataset.deleteExam);data.exams=data.exams.filter(x=>x.id!==b.dataset.deleteExam);if(ex)data.events=data.events.filter(x=>!(x.title===ex.title&&x.date===ex.date&&x.type==='exam'));save()}
+ if(b.dataset.deleteTutor){const t=data.tutors.find(x=>x.id===b.dataset.deleteTutor);if(confirm(`Видалити облік «${t?.name}»?`)){data.tutors=data.tutors.filter(x=>x.id!==b.dataset.deleteTutor);data.history.push({id:uid(),text:`Видалено облік: ${t?.name}`,date:iso(today)});save()}}
+ if(b.dataset.conducted){const t=data.tutors.find(x=>x.id===b.dataset.conducted);if(t){t.conducted++;data.history.push({id:uid(),text:`Додано проведене заняття: ${t.name}`,date:iso(today)});save()}}
+ if(b.dataset.paid){const t=data.tutors.find(x=>x.id===b.dataset.paid);if(t&&t.paid<t.conducted){t.paid++;data.history.push({id:uid(),text:`Оплата за одне заняття: ${t.name} (${money(t.price)})`,date:iso(today)});save()}}
+});
+$('#parseTaskBtn').onclick=()=>{
+ const raw=$('#smartInput').value.trim();if(!raw){$('#smartResult').textContent='Спочатку введи текст завдання.';return}
+ const match=raw.match(/\b(\d{1,2})[./-](\d{1,2})(?:[./-](\d{2,4}))?\b/);let due='';
+ if(match){let y=match[3]?+match[3]:today.getFullYear();if(y<100)y+=2000;due=iso(new Date(y,+match[2]-1,+match[1]))}
+ else {const m=raw.match(/через\s+(\d+)\s+дн/i);if(m)due=addDays(today,+m[1]);}
+ let category=/репетитор|англійськ|математик|заняття/i.test(raw)?'tutor':'school';
+ const title=raw.replace(/до\s+\d{1,2}[./-]\d{1,2}(?:[./-]\d{2,4})?/i,'').trim();
+ $('#smartResult').innerHTML=`Знайдено категорію: <strong>${catLabel(category)}</strong>. ${due?'Можливий дедлайн: <strong>'+dateText(due)+'</strong>.':'Дату не вдалося визначити — додай її вручну.'} Перевір інформацію перед збереженням. <button class="btn secondary small" id="saveParsed">Додати як завдання</button>`;
+ $('#saveParsed').onclick=()=>{data.tasks.push({id:uid(),title,category,due,priority:'medium',done:false,note:'Додано з розумного планувальника'});$('#smartInput').value='';$('#smartResult').textContent='Завдання додано. Перевір його у списку.';save()};
+};
+renderAll();
+</script>
+<script>
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+}
+</script>
+</body>
+</html>
